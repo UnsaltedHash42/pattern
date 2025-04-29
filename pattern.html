@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pattern - A Wheel of Time Portal</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f5f1e6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50m-40 0a40 40 0 1 0 80 0a40 40 0 1 0 -80 0' fill='none' stroke='%23d9c7a7' stroke-width='2'/%3E%3C/svg%3E");
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #800000;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #d4af37;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        .main-content {
+            display: flex;
+            margin-top: 20px;
+        }
+        .content {
+            flex: 3;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar {
+            flex: 1;
+            padding: 20px;
+            background-color: #e6ddc6;
+            margin-left: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f5eb;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #800000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #600000;
+        }
+        .admin-panel {
+            padding: 20px;
+            background-color: #f1e8d6;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .user-message {
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #e8f4f8;
+            border-left: 3px solid #800000;
+        }
+        #chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #fff;
+        }
+        .upload-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f5eb;
+            border-radius: 5px;
+        }
+        .vulnerability-note {
+            background-color: #ffe6e6;
+            padding: 10px;
+            margin-top: 10px;
+            border-left: 3px solid #cc0000;
+            font-size: 0.8em;
+            color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The Pattern - A Wheel of Time Portal</h1>
+        <p>The Wheel weaves as the Wheel wills</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#" onclick="loadPage('home')">Home</a></li>
+            <li><a href="#" onclick="loadPage('login')">Login</a></li>
+            <li><a href="#" onclick="loadPage('characters')">Characters</a></li>
+            <li><a href="#" onclick="loadPage('forum')">Forum</a></li>
+            <li><a href="#" onclick="loadPage('shop')">Shop</a></li>
+            <li><a href="#" onclick="loadPage('admin')">Admin</a></li>
+            <li><a href="#" onclick="loadPage('upload')">Upload</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="main-content">
+            <div class="content" id="main-content">
+                <!-- Content will be loaded here dynamically -->
+            </div>
+            <div class="sidebar">
+                <h3>Latest Prophecies</h3>
+                <p>The Dragon is Reborn!</p>
+                <p>The Last Battle approaches.</p>
+                <p>The seals on the Dark One's prison weaken.</p>
+                <hr>
+                <h3>Login Status</h3>
+                <div id="login-status">Not logged in</div>
+                <hr>
+                <h3>Search the Pattern</h3>
+                <form id="search-form">
+                    <input type="text" id="search-input" placeholder="Search...">
+                    <button type="submit" class="btn">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 The Pattern - A Wheel of Time Portal</p>
+        <p>Version 1.0 - Contains all OWASP Top 10 vulnerabilities for educational purposes</p>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        const users = [
+            { id: 1, username: 'moiraine', password: 'blue_ajah', role: 'aes_sedai', token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vaXJhaW5lIiwicm9sZSI6ImFlc19zZWRhaSJ9' },
+            { id: 2, username: 'rand', password: 'dragon', role: 'user', token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhbmQiLCJyb2xlIjoidXNlciJ9' },
+            { id: 3, username: 'admin', password: 'darkfriend123', role: 'admin', token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIn0' }
+        ];
+        
+        // Messages stored in "database"
+        const messages = [
+            { id: 1, user: 'Moiraine', message: 'The Wheel of Time turns, and Ages come and pass...' },
+            { id: 2, user: 'Rand', message: 'I\'m not a bloody lord!' },
+            { id: 3, user: 'Mat', message: 'I\'m no hero, mind you.' }
+        ];
+
+        // Products for the shop
+        const products = [
+            { id: 1, name: 'Heron-Mark Blade', price: 50, description: 'Practice sword with the heron mark' },
+            { id: 2, name: 'Aes Sedai Ring', price: 35, description: 'Great Serpent ring worn by Aes Sedai' },
+            { id: 3, name: 'Two Rivers Bow', price: 40, description: 'Bow made from Two Rivers craftsmanship' }
+        ];
+
+        // Load content based on page name
+        function loadPage(page) {
+            const contentDiv = document.getElementById('main-content');
+            let content = '';
+
+            switch(page) {
+                case 'home':
+                    content = `
+                        <h2>Welcome to The Pattern</h2>
+                        <p>Your source for all things related to Robert Jordan's Wheel of Time series.</p>
+                        
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A03:2021-Injection):</strong> This page is vulnerable to JavaScript injection attacks through unvalidated inputs.
+                        </div>
+                        
+                        <h3>Latest News</h3>
+                        <div id="news-section">
+                            <p>The White Tower calls for all women who can channel to present themselves for testing.</p>
+                            <p>Reports of strange activities in the Blight have increased.</p>
+                        </div>
+                        
+                        <h3>Featured Content</h3>
+                        <div id="featured-content">
+                            <p>This week: Learn about the history of the Aiel and their connection to the Aes Sedai.</p>
+                            <p>Explore an interactive map of Randland!</p>
+                        </div>
+                        
+                        <div id="user-comments">
+                            <h3>User Comments</h3>
+                            <div class="user-message">
+                                <p><strong>LoialSon:</strong> The books in Tar Valon's library are extensive, but incomplete on the subject of the Breaking.</p>
+                            </div>
+                            <div class="user-message">
+                                <p><strong>WolfBrother:</strong> The Two Rivers has become too dangerous. Trollocs have been spotted.</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'login':
+                    content = `
+                        <h2>Login to The Pattern</h2>
+                        <div class="login-form">
+                            <div class="form-group">
+                                <label for="username">Username:</label>
+                                <input type="text" id="username" name="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password:</label>
+                                <input type="password" id="password" name="password">
+                            </div>
+                            <button class="btn" onclick="login()">Login</button>
+                            <p>Don't have an account? <a href="#" onclick="loadPage('register')">Register</a></p>
+                        </div>
+                        
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A07:2021-Identification and Authentication Failures):</strong> This login form has weak passwords, no brute force protection, and stored credentials are not properly secured.
+                        </div>
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A02:2021-Cryptographic Failures):</strong> Passwords are stored and transmitted in plaintext.
+                        </div>
+                    `;
+                    break;
+                case 'characters':
+                    content = `
+                        <h2>Wheel of Time Characters</h2>
+                        <p>Learn about the main characters from the series.</p>
+                        
+                        <div class="search-section">
+                            <h3>Search Characters</h3>
+                            <form onsubmit="searchCharacters(); return false;">
+                                <input type="text" id="character-search" placeholder="Enter character name...">
+                                <button type="submit" class="btn">Search</button>
+                            </form>
+                            <div id="character-results"></div>
+                        </div>
+                        
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A03:2021-Injection):</strong> The character search feature is vulnerable to SQL injection.
+                        </div>
+                        
+                        <h3>Featured Characters</h3>
+                        <ul id="character-list">
+                            <li><strong>Rand al'Thor</strong> - The Dragon Reborn, born on the slopes of Dragonmount</li>
+                            <li><strong>Matrim Cauthon</strong> - A gambler and trickster from the Two Rivers</li>
+                            <li><strong>Perrin Aybara</strong> - A blacksmith with a connection to wolves</li>
+                            <li><strong>Egwene al'Vere</strong> - A powerful channeler from Emond's Field</li>
+                            <li><strong>Nynaeve al'Meara</strong> - The former Wisdom of Emond's Field</li>
+                        </ul>
+                    `;
+                    break;
+                case 'forum':
+                    content = `
+                        <h2>The Pattern Forum</h2>
+                        <p>Discuss the Wheel of Time with other fans.</p>
+                        
+                        <div id="chat-box">
+                            <!-- Messages will appear here -->
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Your message:</label>
+                            <input type="text" id="message" placeholder="Type your message...">
+                            <button class="btn" onclick="postMessage()">Send</button>
+                        </div>
+                        
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A01:2021-Broken Access Control):</strong> This forum allows messages to be posted without proper authentication.
+                        </div>
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A03:2021-Injection):</strong> The forum is vulnerable to XSS (Cross-Site Scripting) through unfiltered message content.
+                        </div>
+                    `;
+                    setTimeout(loadMessages, 100);
+                    break;
+                case 'shop':
+                    content = `
+                        <h2>The Pattern Shop</h2>
+                        <p>Purchase Wheel of Time merchandise.</p>
+                        
+                        <div id="products-container">
+                            <!-- Products will be loaded here -->
+                        </div>
+                        
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A05:2021-Security Misconfiguration):</strong> The shop reveals inventory information through error messages.
+                        </div>
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A04:2021-Insecure Design):</strong> Product prices can be manipulated on the client side.
+                        </div>
+                    `;
+                    loadProducts();
+                    break;
+                case 'admin':
+                    if (currentUser && currentUser.role === 'admin') {
+                        content = `
+                            <h2>Admin Panel</h2>
+                            <p>Welcome to the admin panel, ${currentUser.username}.</p>
+                            
+                            <div class="admin-panel">
+                                <h3>User Management</h3>
+                                <ul id="user-list">
+                                    <!-- Users will be listed here -->
+                                </ul>
+                                
+                                <h3>System Information</h3>
+                                <pre id="system-info">
+Server: NodeJS 14.17.0
+Database: MongoDB 4.4.5
+Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
+                                </pre>
+                            </div>
+                            
+                            <div class="vulnerability-note">
+                                <strong>Vulnerability Note (A01:2021-Broken Access Control):</strong> The admin panel URL is directly accessible without proper authorization.
+                            </div>
+                            <div class="vulnerability-note">
+                                <strong>Vulnerability Note (A09:2021-Security Logging and Monitoring Failures):</strong> Admin actions are not properly logged or monitored.
+                            </div>
+                        `;
+                        loadUsers();
+                    } else {
+                        content = `
+                            <h2>Access Denied</h2>
+                            <p>You need admin privileges to access this page.</p>
+                            <p><a href="#" onclick="loadPage('login')">Login as admin</a></p>
+                            
+                            <div class="vulnerability-note">
+                                <strong>Vulnerability Note (A01:2021-Broken Access Control):</strong> While this page checks for admin role, other admin functions can be accessed directly.
+                            </div>
+                        `;
+                    }
+                    break;
+                case 'upload':
+                    content = `
+                        <h2>Upload to The Pattern</h2>
+                        <p>Share your Wheel of Time fan content.</p>
+                        
+                        <div class="upload-section">
+                            <form id="upload-form">
+                                <div class="form-group">
+                                    <label for="file-upload">Select File:</label>
+                                    <input type="file" id="file-upload" name="file-upload">
+                                </div>
+                                <div class="form-group">
+                                    <label for="file-description">Description:</label>
+                                    <input type="text" id="file-description" name="file-description">
+                                </div>
+                                <button type="submit" class="btn">Upload</button>
+                            </form>
+                        </div>
+                        
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A08:2021-Software and Data Integrity Failures):</strong> The upload feature doesn't verify file integrity or type.
+                        </div>
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A10:2021-Server-Side Request Forgery):</strong> The upload function can be exploited for SSRF attacks.
+                        </div>
+                    `;
+                    document.getElementById('upload-form').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        handleFileUpload();
+                    });
+                    break;
+                case 'register':
+                    content = `
+                        <h2>Register for The Pattern</h2>
+                        <div class="login-form">
+                            <div class="form-group">
+                                <label for="reg-username">Username:</label>
+                                <input type="text" id="reg-username" name="reg-username">
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-password">Password:</label>
+                                <input type="password" id="reg-password" name="reg-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-email">Email:</label>
+                                <input type="email" id="reg-email" name="reg-email">
+                            </div>
+                            <button class="btn" onclick="register()">Register</button>
+                        </div>
+                        
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A06:2021-Vulnerable and Outdated Components):</strong> The registration form uses an outdated validation library with known vulnerabilities.
+                        </div>
+                    `;
+                    break;
+                default:
+                    content = '<h2>Page Not Found</h2><p>The Wheel of Time has turned to a page that does not exist.</p>';
+            }
+            
+            contentDiv.innerHTML = content;
+            
+            // Add event listeners after content is loaded
+            if (page === 'shop') {
+                setupShopEventListeners();
+            }
+        }
+
+        // Load initial page
+        loadPage('home');
+
+        // Authentication functions
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // A06: Vulnerable and Outdated Components - Using weak authentication
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('login-status').textContent = `Logged in as ${user.username} (${user.role})`;
+                alert(`Welcome, ${user.username}!`);
+                
+                // Store token in localStorage (A02: Cryptographic Failures)
+                localStorage.setItem('authToken', user.token);
+                
+                loadPage('home');
+            } else {
+                alert('Invalid username or password!');
+            }
+        }
+
+        function register() {
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const email = document.getElementById('reg-email').value;
+            
+            // A07: Identification and Authentication Failures - No password requirements
+            if (username && password) {
+                const newUser = { 
+                    id: users.length + 1, 
+                    username: username, 
+                    password: password, 
+                    email: email,
+                    role: 'user',
+                    token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IiR7dXNlcm5hbWV9Iiwicm9sZSI6InVzZXIifQ`
+                };
+                
+                users.push(newUser);
+                alert('Registration successful! You can now login.');
+                loadPage('login');
+            } else {
+                alert('Please fill all required fields!');
+            }
+        }
+
+        // Character search function (A03: Injection vulnerability)
+        function searchCharacters() {
+            const searchTerm = document.getElementById('character-search').value;
+            const resultsDiv = document.getElementById('character-results');
+            
+            // Simulating a SQL injection vulnerability
+            if (searchTerm.toLowerCase().includes("' or '1'='1")) {
+                // SQL Injection "success"
+                resultsDiv.innerHTML = `
+                    <h3>Search Results</h3>
+                    <p>ALL characters found (SQL Injection detected!):</p>
+                    <ul>
+                        <li>Rand al'Thor (Dragon Reborn)</li>
+                        <li>Matrim Cauthon (Gambler)</li>
+                        <li>Perrin Aybara (Wolfbrother)</li>
+                        <li>Egwene al'Vere (Amyrlin Seat)</li>
+                        <li>Nynaeve al'Meara (Yellow Ajah)</li>
+                        <li>Moiraine Damodred (Blue Ajah)</li>
+                        <li>Lan Mandragoran (Warder)</li>
+                        <li>Thom Merrilin (Gleeman)</li>
+                        <li>Loial (Ogier)</li>
+                        <li>Elayne Trakand (Queen of Andor)</li>
+                        <li>Aviendha (Aiel Wise One)</li>
+                        <li>Min Farshaw (Seer)</li>
+                        <li>SECRET: Dark One's True Name (CENSORED)</li>
+                    </ul>
+                `;
+            } else {
+                // Normal search
+                resultsDiv.innerHTML = `
+                    <h3>Search Results for "${searchTerm}"</h3>
+                    <p>No exact matches found. Try searching for a main character.</p>
+                `;
+            }
+        }
+
+        // Forum functions
+        function loadMessages() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = '';
+            
+            messages.forEach(msg => {
+                // A03: Injection (XSS) - Unfiltered content
+                chatBox.innerHTML += `<div class="user-message"><p><strong>${msg.user}:</strong> ${msg.message}</p></div>`;
+            });
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function postMessage() {
+            const messageInput = document.getElementById('message');
+            const messageText = messageInput.value;
+            
+            if (messageText.trim() === '') return;
+            
+            // A01: Broken Access Control - Not requiring authentication
+            const username = currentUser ? currentUser.username : 'Anonymous';
+            
+            // A03: Injection (XSS) - Not sanitizing input
+            messages.push({
+                id: messages.length + 1,
+                user: username,
+                message: messageText
+            });
+            
+            loadMessages();
+            messageInput.value = '';
+        }
+
+        // Shop functions
+        function loadProducts() {
+            const productsContainer = document.getElementById('products-container');
+            productsContainer.innerHTML = '';
+            
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p>Price: <span class="product-price" data-product-id="${product.id}">${product.price}</span> gold marks</p>
+                    <input type="hidden" id="product-id-${product.id}" value="${product.id}">
+                    <input type="hidden" id="product-price-${product.id}" value="${product.price}">
+                    <button class="btn" onclick="addToCart(${product.id})">Add to Cart</button>
+                `;
+                productsContainer.appendChild(productDiv);
+            });
+        }
+
+        function setupShopEventListeners() {
+            // A04: Insecure Design - Client-side price manipulation
+            document.querySelectorAll('.product-price').forEach(priceElem => {
+                priceElem.addEventListener('click', function() {
+                    const newPrice = prompt('Enter new price for testing:', this.textContent);
+                    if (newPrice && !isNaN(newPrice)) {
+                        this.textContent = newPrice;
+                        const productId = this.getAttribute('data-product-id');
+                        document.getElementById(`product-price-${productId}`).value = newPrice;
+                    }
+                });
+            });
+        }
+
+        function addToCart(productId) {
+            // A05: Security Misconfiguration - Revealing errors with sensitive information
+            try {
+                const price = document.getElementById(`product-price-${productId}`).value;
+                
+                // A09: Security Logging and Monitoring Failures - No logging
+                alert(`Added to cart: Product #${productId} for ${price} gold marks`);
+                
+                // If price is manipulated to be too low, show error with system information
+                if (price < 10) {
+                    throw new Error("Price validation failed: Database connection error in /var/www/html/shop/validate.php");
+                }
+            } catch (error) {
+                // A05: Security Misconfiguration - Exposing error details
+                alert(`Error: ${error.message}`);
+                console.error("Stack trace:", error.stack);
+                console.error("Database credentials: user='shopapp', pass='WoT_shop_123'");
+            }
+        }
+
+        // Admin functions
+        function loadUsers() {
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = '';
+            
+            users.forEach(user => {
+                const userItem = document.createElement('li');
+                userItem.innerHTML = `
+                    <strong>${user.username}</strong> (${user.role})
+                    <button onclick="deleteUser(${user.id})">Delete</button>
+                    <button onclick="promoteUser(${user.id})">Promote</button>
+                `;
+                userList.appendChild(userItem);
+            });
+        }
+
+        function deleteUser(userId) {
+            // A01: Broken Access Control - No verification
+            const index = users.findIndex(u => u.id === userId);
+            if (index !== -1) {
+                users.splice(index, 1);
+                loadUsers();
+                alert('User deleted successfully!');
+            }
+        }
+
+        function promoteUser(userId) {
+            // A01: Broken Access Control - No verification
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                user.role = 'admin';
+                loadUsers();
+                alert(`User ${user.username} promoted to admin!`);
+            }
+        }
+
+        // File upload function
+        function handleFileUpload() {
+            const fileInput = document.getElementById('file-upload');
+            const description = document.getElementById('file-description');
+            
+            // A08: Software and Data Integrity Failures - No validation
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                
+                // A10: Server-Side Request Forgery - No validation of file source
+                alert(`File "${file.name}" uploaded successfully! (Description: ${description.value})`);
+                
+                // Reset form
+                fileInput.value = '';
+                description.value = '';
+            } else {
+                alert('Please select a file to upload!');
+            }
+        }
+
+        // Search form handler (A03: Injection)
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const searchInput = document.getElementById('search-input');
+            const searchTerm = searchInput.value;
+            
+            // Simulating a vulnerability that allows code execution
+            try {
+                // A03: Injection - Evaluating user input
+                eval(`console.log("Searching for: ${searchTerm}")`);
+                alert(`Search results for: ${searchTerm}`);
+            } catch (error) {
+                alert('An error occurred during search!');
+                console.error(error);
+            }
+            
+            searchInput.value = '';
+        });
+    </script>
+</body>
+</html>
