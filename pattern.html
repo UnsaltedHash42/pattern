@@ -144,6 +144,28 @@
             font-size: 0.8em;
             color: #cc0000;
         }
+        .product {
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .cart-container {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        #cart-items {
+            list-style-type: none;
+            padding: 0;
+        }
+        #cart-items li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
     </style>
 </head>
 <body>
@@ -212,6 +234,25 @@
             { id: 3, name: 'Two Rivers Bow', price: 40, description: 'Bow made from Two Rivers craftsmanship' }
         ];
 
+        // Shopping cart
+        const cart = [];
+
+        // Check for existing token on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                // A06: Vulnerable and Outdated Components - Token not validated properly
+                const user = users.find(u => u.token === token);
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('login-status').textContent = `Logged in as ${user.username} (${user.role})`;
+                }
+            }
+            
+            // Load the initial page
+            loadPage('home');
+        });
+
         // Load content based on page name
         function loadPage(page) {
             const contentDiv = document.getElementById('main-content');
@@ -247,6 +288,7 @@
                             <div class="user-message">
                                 <p><strong>WolfBrother:</strong> The Two Rivers has become too dangerous. Trollocs have been spotted.</p>
                             </div>
+                            <button class="btn" onclick="addComment()">Add Comment</button>
                         </div>
                     `;
                     break;
@@ -289,7 +331,7 @@
                         </div>
                         
                         <div class="vulnerability-note">
-                            <strong>Vulnerability Note (A03:2021-Injection):</strong> The character search feature is vulnerable to SQL injection.
+                            <strong>Vulnerability Note (A03:2021-Injection):</strong> The character search feature is vulnerable to SQL injection. Try using: ' OR '1'='1
                         </div>
                         
                         <h3>Featured Characters</h3>
@@ -321,7 +363,7 @@
                             <strong>Vulnerability Note (A01:2021-Broken Access Control):</strong> This forum allows messages to be posted without proper authentication.
                         </div>
                         <div class="vulnerability-note">
-                            <strong>Vulnerability Note (A03:2021-Injection):</strong> The forum is vulnerable to XSS (Cross-Site Scripting) through unfiltered message content.
+                            <strong>Vulnerability Note (A03:2021-Injection):</strong> The forum is vulnerable to XSS (Cross-Site Scripting) through unfiltered message content. Try: <script>alert('XSS')</script>
                         </div>
                     `;
                     setTimeout(loadMessages, 100);
@@ -335,54 +377,58 @@
                             <!-- Products will be loaded here -->
                         </div>
                         
+                        <div class="cart-container">
+                            <h3>Shopping Cart</h3>
+                            <ul id="cart-items"></ul>
+                            <p>Total: <span id="cart-total">0</span> gold marks</p>
+                            <button class="btn" onclick="checkout()">Checkout</button>
+                        </div>
+                        
                         <div class="vulnerability-note">
                             <strong>Vulnerability Note (A05:2021-Security Misconfiguration):</strong> The shop reveals inventory information through error messages.
                         </div>
                         <div class="vulnerability-note">
-                            <strong>Vulnerability Note (A04:2021-Insecure Design):</strong> Product prices can be manipulated on the client side.
+                            <strong>Vulnerability Note (A04:2021-Insecure Design):</strong> Product prices can be manipulated on the client side by clicking on the price.
                         </div>
                     `;
                     loadProducts();
+                    loadCart();
                     break;
                 case 'admin':
-                    if (currentUser && currentUser.role === 'admin') {
-                        content = `
-                            <h2>Admin Panel</h2>
-                            <p>Welcome to the admin panel, ${currentUser.username}.</p>
+                    // A01: Broken Access Control - URL is accessible without proper authorization
+                    content = `
+                        <h2>Admin Panel</h2>
+                        <p id="admin-welcome">Welcome to the admin panel${currentUser ? ', ' + currentUser.username : ''}.</p>
+                        
+                        <div class="admin-panel">
+                            <h3>User Management</h3>
+                            <ul id="user-list">
+                                <!-- Users will be listed here -->
+                            </ul>
                             
-                            <div class="admin-panel">
-                                <h3>User Management</h3>
-                                <ul id="user-list">
-                                    <!-- Users will be listed here -->
-                                </ul>
-                                
-                                <h3>System Information</h3>
-                                <pre id="system-info">
+                            <h3>System Information</h3>
+                            <pre id="system-info">
 Server: NodeJS 14.17.0
 Database: MongoDB 4.4.5
 Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
-                                </pre>
-                            </div>
+Admin Password: darkfriend123
+                            </pre>
                             
-                            <div class="vulnerability-note">
-                                <strong>Vulnerability Note (A01:2021-Broken Access Control):</strong> The admin panel URL is directly accessible without proper authorization.
-                            </div>
-                            <div class="vulnerability-note">
-                                <strong>Vulnerability Note (A09:2021-Security Logging and Monitoring Failures):</strong> Admin actions are not properly logged or monitored.
-                            </div>
-                        `;
-                        loadUsers();
-                    } else {
-                        content = `
-                            <h2>Access Denied</h2>
-                            <p>You need admin privileges to access this page.</p>
-                            <p><a href="#" onclick="loadPage('login')">Login as admin</a></p>
-                            
-                            <div class="vulnerability-note">
-                                <strong>Vulnerability Note (A01:2021-Broken Access Control):</strong> While this page checks for admin role, other admin functions can be accessed directly.
-                            </div>
-                        `;
-                    }
+                            <h3>Admin Actions</h3>
+                            <button class="btn" onclick="backupDatabase()">Backup Database</button>
+                            <button class="btn" onclick="clearLogs()">Clear Logs</button>
+                        </div>
+                        
+                        <div id="admin-message"></div>
+                        
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A01:2021-Broken Access Control):</strong> The admin panel is accessible without proper authorization. The role check is client-side only.
+                        </div>
+                        <div class="vulnerability-note">
+                            <strong>Vulnerability Note (A09:2021-Security Logging and Monitoring Failures):</strong> Admin actions are not properly logged or monitored.
+                        </div>
+                    `;
+                    loadUsers();
                     break;
                 case 'upload':
                     content = `
@@ -399,15 +445,21 @@ Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
                                     <label for="file-description">Description:</label>
                                     <input type="text" id="file-description" name="file-description">
                                 </div>
+                                <div class="form-group">
+                                    <label for="remote-url">Or fetch from URL:</label>
+                                    <input type="text" id="remote-url" name="remote-url" placeholder="https://example.com/file.txt">
+                                </div>
                                 <button type="submit" class="btn">Upload</button>
                             </form>
                         </div>
+                        
+                        <div id="upload-result"></div>
                         
                         <div class="vulnerability-note">
                             <strong>Vulnerability Note (A08:2021-Software and Data Integrity Failures):</strong> The upload feature doesn't verify file integrity or type.
                         </div>
                         <div class="vulnerability-note">
-                            <strong>Vulnerability Note (A10:2021-Server-Side Request Forgery):</strong> The upload function can be exploited for SSRF attacks.
+                            <strong>Vulnerability Note (A10:2021-Server-Side Request Forgery):</strong> The upload function can be exploited for SSRF attacks via the "fetch from URL" field.
                         </div>
                     `;
                     document.getElementById('upload-form').addEventListener('submit', function(e) {
@@ -451,15 +503,12 @@ Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
             }
         }
 
-        // Load initial page
-        loadPage('home');
-
         // Authentication functions
         function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // A06: Vulnerable and Outdated Components - Using weak authentication
+            // A07: Identification and Authentication Failures - Using weak authentication
             const user = users.find(u => u.username === username && u.password === password);
             
             if (user) {
@@ -467,12 +516,14 @@ Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
                 document.getElementById('login-status').textContent = `Logged in as ${user.username} (${user.role})`;
                 alert(`Welcome, ${user.username}!`);
                 
-                // Store token in localStorage (A02: Cryptographic Failures)
+                // A02: Cryptographic Failures - Store token in localStorage
                 localStorage.setItem('authToken', user.token);
                 
                 loadPage('home');
             } else {
                 alert('Invalid username or password!');
+                // Hint for the class
+                console.log('Hint: Try one of these users: moiraine/blue_ajah, rand/dragon, admin/darkfriend123');
             }
         }
 
@@ -532,6 +583,7 @@ Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
                 resultsDiv.innerHTML = `
                     <h3>Search Results for "${searchTerm}"</h3>
                     <p>No exact matches found. Try searching for a main character.</p>
+                    <p><i>Hint: Try using SQL injection with: ' OR '1'='1</i></p>
                 `;
             }
         }
@@ -607,12 +659,26 @@ Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
             // A05: Security Misconfiguration - Revealing errors with sensitive information
             try {
                 const price = document.getElementById(`product-price-${productId}`).value;
+                const product = products.find(p => p.id == productId);
+                
+                if (!product) {
+                    throw new Error("Product not found in database! Check inventory at /var/www/html/inventory.json");
+                }
+                
+                // A04: Insecure Design - No validation of price on server
+                cart.push({
+                    id: productId,
+                    name: product.name,
+                    price: parseFloat(price)
+                });
+                
+                loadCart();
                 
                 // A09: Security Logging and Monitoring Failures - No logging
-                alert(`Added to cart: Product #${productId} for ${price} gold marks`);
+                alert(`Added to cart: ${product.name} for ${price} gold marks`);
                 
                 // If price is manipulated to be too low, show error with system information
-                if (price < 10) {
+                if (parseFloat(price) < 10) {
                     throw new Error("Price validation failed: Database connection error in /var/www/html/shop/validate.php");
                 }
             } catch (error) {
@@ -623,9 +689,50 @@ Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
             }
         }
 
+        function loadCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `${item.name} - ${item.price} gold marks <button onclick="removeFromCart(${index})">Remove</button>`;
+                cartItems.appendChild(li);
+                total += item.price;
+            });
+            
+            cartTotal.textContent = total.toFixed(2);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            loadCart();
+        }
+
+        function checkout() {
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            // A02: Cryptographic Failures - No secure transmission of payment info
+            alert(`Thank you for your purchase! Total: ${total.toFixed(2)} gold marks`);
+            console.log('Payment processed with unsecured connection.');
+            
+            // Clear cart
+            cart.length = 0;
+            loadCart();
+        }
+
         // Admin functions
         function loadUsers() {
             const userList = document.getElementById('user-list');
+            if (!userList) return; // Skip if element doesn't exist
+            
             userList.innerHTML = '';
             
             users.forEach(user => {
@@ -645,7 +752,11 @@ Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
             if (index !== -1) {
                 users.splice(index, 1);
                 loadUsers();
-                alert('User deleted successfully!');
+                
+                const adminMessage = document.getElementById('admin-message');
+                if (adminMessage) {
+                    adminMessage.innerHTML = '<p style="color: green;">User deleted successfully!</p>';
+                }
             }
         }
 
@@ -655,7 +766,34 @@ Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
             if (user) {
                 user.role = 'admin';
                 loadUsers();
-                alert(`User ${user.username} promoted to admin!`);
+                
+                const adminMessage = document.getElementById('admin-message');
+                if (adminMessage) {
+                    adminMessage.innerHTML = `<p style="color: green;">User ${user.username} promoted to admin!</p>`;
+                }
+            }
+        }
+
+        function backupDatabase() {
+            // A09: Security Logging and Monitoring Failures - No audit logs
+            const adminMessage = document.getElementById('admin-message');
+            if (adminMessage) {
+                adminMessage.innerHTML = `
+                    <p style="color: green;">Database backup initiated!</p>
+                    <pre>Backing up to /var/backups/wot_portal_db.sql</pre>
+                    <pre>Backup accessible at https://thepattern.com/backups/wot_portal_db.sql</pre>
+                `;
+            }
+        }
+
+        function clearLogs() {
+            // A09: Security Logging and Monitoring Failures
+            const adminMessage = document.getElementById('admin-message');
+            if (adminMessage) {
+                adminMessage.innerHTML = `
+                    <p style="color: green;">System logs cleared!</p>
+                    <pre>All access logs and security logs have been erased.</pre>
+                `;
             }
         }
 
@@ -663,39 +801,84 @@ Secret Key: 83edc7b4a7a94662f9e56e3f8d711978
         function handleFileUpload() {
             const fileInput = document.getElementById('file-upload');
             const description = document.getElementById('file-description');
+            const remoteUrl = document.getElementById('remote-url').value;
+            const uploadResult = document.getElementById('upload-result');
             
-            // A08: Software and Data Integrity Failures - No validation
-            if (fileInput.files.length > 0) {
+            if (remoteUrl) {
+                // A10: Server-Side Request Forgery - No validation of URL
+                uploadResult.innerHTML = `
+                    <h3>File Fetched Successfully!</h3>
+                    <p>Fetched from URL: ${remoteUrl}</p>
+                    <p>Description: ${description.value}</p>
+                    <div class="vulnerability-note">
+                        <strong>SSRF Vulnerability:</strong> The server attempted to fetch the file from the provided URL without proper validation.
+                        Try URLs like http://localhost:8080/admin or file:///etc/passwd
+                    </div>
+                `;
+            } else if (fileInput.files.length > 0) {
+                // A08: Software and Data Integrity Failures - No validation
                 const file = fileInput.files[0];
                 
-                // A10: Server-Side Request Forgery - No validation of file source
-                alert(`File "${file.name}" uploaded successfully! (Description: ${description.value})`);
+                uploadResult.innerHTML = `
+                    <h3>Upload Successful!</h3>
+                    <p>File: ${file.name}</p>
+                    <p>Type: ${file.type || 'unknown'}</p>
+                    <p>Size: ${Math.round(file.size / 1024)} KB</p>
+                    <p>Description: ${description.value}</p>
+                    <div class="vulnerability-note">
+                        <strong>Software and Data Integrity Failure:</strong> The server accepted the file without validating its type, content, or scanning for malware.
+                    </div>
+                `;
                 
                 // Reset form
                 fileInput.value = '';
                 description.value = '';
+                document.getElementById('remote-url').value = '';
             } else {
-                alert('Please select a file to upload!');
+                uploadResult.innerHTML = `
+                    <p style="color: red;">Please select a file to upload or provide a remote URL!</p>
+                `;
+            }
+        }
+
+        // Add a comment with potential XSS
+        function addComment() {
+            const comment = prompt("Enter your comment:");
+            if (comment && comment.trim() !== '') {
+                // A03: Injection (XSS) - Not sanitizing input
+                const userComments = document.getElementById('user-comments');
+                const newComment = document.createElement('div');
+                newComment.className = 'user-message';
+                
+                // Vulnerable to XSS since we use innerHTML and don't sanitize input
+                newComment.innerHTML = `<p><strong>${currentUser ? currentUser.username : 'Anonymous'}:</strong> ${comment}</p>`;
+                
+                // Insert before the button
+                userComments.insertBefore(newComment, userComments.lastElementChild);
             }
         }
 
         // Search form handler (A03: Injection)
-        document.getElementById('search-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const searchInput = document.getElementById('search-input');
-            const searchTerm = searchInput.value;
-            
-            // Simulating a vulnerability that allows code execution
-            try {
-                // A03: Injection - Evaluating user input
-                eval(`console.log("Searching for: ${searchTerm}")`);
-                alert(`Search results for: ${searchTerm}`);
-            } catch (error) {
-                alert('An error occurred during search!');
-                console.error(error);
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('search-form');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const searchInput = document.getElementById('search-input');
+                    const searchTerm = searchInput.value;
+                    
+                    try {
+                        // A03: Injection - Evaluating user input (vulnerable to JavaScript injection)
+                        eval(`console.log("Searching for: ${searchTerm}")`);
+                        alert(`Search results for: ${searchTerm}`);
+                    } catch (error) {
+                        alert('An error occurred during search: ' + error.message);
+                        console.error(error);
+                    }
+                    
+                    searchInput.value = '';
+                });
             }
-            
-            searchInput.value = '';
         });
     </script>
 </body>
